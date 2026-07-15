@@ -1,0 +1,46 @@
+name: Build and Deploy Analytics Service (Blue-Green)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'analytics-service/**'
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./analytics-service
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/analytics-service:${{ github.sha }}
+
+      - name: Deploy to EC2 (blue-green switch)
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ec2-user
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            CURRENT=$(kubectl get svc analytics-service -o jsonpath='{.spec.selector.version}')
+            if [ "$CURRENT" = "blue" ]; then
+              IDLE="green"
+            else
+              IDLE="blue"
+            fi
+            sudo k3s ctr images pull docker.io/${{ secrets.DOCKERHUB_USERNAME }}/analytics-service:${{ github.sha }}
+            kubectl set image deployment/analytics-service-$IDLE analytics-service=docker.io/${{ secrets.DOCKERHUB_USERNAME }}/analytics-service:${{ github.sha }}
+            kubectl rollout status deployment/analytics-service-$IDLE
+            kubectl patch svc analytics-service -p "{\"spec\":{\"selector\":{\"app\":\"analytics-service\",\"version\":\"$IDLE\"}}}"
+            echo "Switched traffic to $IDLE"
