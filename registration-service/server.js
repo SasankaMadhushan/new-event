@@ -47,3 +47,4 @@ app.post('/registrations', async (req, res) => {
 
 app.listen(3000, () => console.log('Registration service running on port 3000'));
 // CI/CD test
+// fresh CI/CD verification
