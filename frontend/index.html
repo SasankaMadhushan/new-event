@@ -678,7 +678,7 @@ http://www.templatemo.com/tm-486-new-event
   }
 
   function track(event_type, event_id, metadata) {
-    fetch('/analytics', {
+    fetch('/api/analytics', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -730,4 +730,3 @@ http://www.templatemo.com/tm-486-new-event
 </script>
 </body>
 </html>
-< CI/CD test -->
