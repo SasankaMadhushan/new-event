@@ -32,7 +32,7 @@ Metabase remains on NodePort `:30010` (documented exception — limited subpath 
 1. Provision an EC2 instance (Amazon Linux 2023, t3.large recommended) with an Elastic IP, and a security group allowing SSH (22), HTTP (80), and NodePort 30010 (Metabase).
 2. Install Docker:
    ```bash
-   sudo dnf install -y docker
+   sudo yum install -y docker
    sudo systemctl enable --now docker
    sudo usermod -aG docker ec2-user
    ```
