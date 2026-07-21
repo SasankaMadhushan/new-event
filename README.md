@@ -1,6 +1,6 @@
-# New Event Platform — CMM707 Cloud Computing Coursework
+# New Event Platform | CMM707 Cloud Computing Coursework
 
-A cloud-native microservices solution for the New Event platform, built on Kubernetes (k3s), with a relational database, a serverless notification trigger, a real-time analytics pipeline, and automated CI/CD using blue-green deployment.
+A cloud native microservices solution for the New Event platform, built on Kubernetes (k3s), with a relational database, a serverless notification trigger, a real time analytics pipeline, and automated CI/CD using blue-green deployment.
 
 ## Architecture Overview
 
@@ -109,4 +109,4 @@ Metabase remains on NodePort `:30010` (documented exception — limited subpath 
 
 ## CI/CD
 
-Each service has its own GitHub Actions workflow, triggered only on changes within that service's folder. Each pipeline: builds a Docker image tagged with the Git commit SHA, pushes it to Docker Hub, then connects to the EC2 instance over SSH to deploy the new image to the currently idle blue/green slot, waits for a successful health check, and only then switches live traffic to it — ensuring zero downtime and instant rollback (by reverting the Service selector) if needed.
+Each service has its own GitHub Actions workflow, triggered only on changes within that service's folder. Each pipeline: builds a Docker image tagged with the Git commit SHA, pushes it to Docker Hub, then connects to the EC2 instance over SSH to deploy the new image to the currently idle blue/green slot, waits for a successful health check, and only then switches live traffic to it ensuring zero downtime and instant rollback if needed.
