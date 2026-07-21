@@ -1,0 +1,18 @@
+name: Test All Services
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 */6 * * *'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run service tests
+        run: |
+          chmod +x scripts/test-services.sh
+          ./scripts/test-services.sh
