@@ -1,3 +1,25 @@
+const express = require('express');
+const { Pool } = require('pg');
+const { LambdaClient, InvokeCommand } = require('@aws-sdk/client-lambda');
+
+const app = express();
+app.use(express.json());
+
+const pool = new Pool({
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
+  ssl: { rejectUnauthorized: false },
+});
+
+const lambdaClient = new LambdaClient({ region: 'us-east-2' });
+
+app.get('/registrations', async (req, res) => {
+  const result = await pool.query('SELECT * FROM registrations');
+  res.json(result.rows);
+});
+
 app.post('/registrations', async (req, res) => {
   const { event_id, program_id, name, email, ticket_count } = req.body;
 
@@ -33,3 +55,5 @@ app.post('/registrations', async (req, res) => {
 
   res.status(201).json(result.rows[0]);
 });
+
+app.listen(3000, () => console.log('Registration service running on port 3000'));
