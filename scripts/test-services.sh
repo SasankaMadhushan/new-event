@@ -45,7 +45,7 @@ check "POST /analytics" "201" "$STATUS"
 
 echo "== Testing Grafana =="
 STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$BASE_URL/grafana")
-check "Grafana loads" "200" "$STATUS"
+check "Grafana loads (redirects to login)" "302" "$STATUS"
 
 if [ "$FAIL" -eq 1 ]; then
   echo "One or more tests FAILED"
